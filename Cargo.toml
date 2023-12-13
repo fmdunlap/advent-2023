@@ -1,0 +1,11 @@
+[package]
+name = "advent-of-code"
+version = "0.1.0"
+edition = "2021"
+description = "Learning Rust via the Advent of Code (2023)"
+repository = "https://github.com/fmdunlap/advent-of-code"
+license = "MIT OR Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
