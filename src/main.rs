@@ -1,4 +1,6 @@
+mod error;
 mod one;
+mod util;
 use clap::Parser;
 use std::path::PathBuf;
 

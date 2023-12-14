@@ -1,19 +1,10 @@
-use std::error::Error;
 use std::path::PathBuf;
+
+use crate::{error::SolutionError, util::load_file};
 
 const NUMBER_WORDS: &[&str] = &[
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
 ];
-
-pub enum SolutionError {
-    NoNumberFound,
-    FileLoadError,
-}
-
-fn load_file(path: PathBuf) -> Result<String, Box<dyn Error>> {
-    let data = std::fs::read_to_string(path)?;
-    Ok(data)
-}
 
 fn number_word_to_i32(word: &str) -> u32 {
     match word {
@@ -54,7 +45,7 @@ fn extract_number(s: &str, reverse: bool) -> Result<u32, SolutionError> {
             return Ok(digit_char);
         }
     }
-    Err(SolutionError::NoNumberFound)
+    Err(SolutionError::NoPossibleSolution)
 }
 
 pub fn run(data_path: PathBuf) -> Result<u32, SolutionError> {
