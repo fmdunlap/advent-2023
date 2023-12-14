@@ -3,15 +3,28 @@ use std::path::PathBuf;
 
 use crate::{error::SolutionError, util::load_file, util::SolutionPart};
 
+#[derive(Debug)]
 struct CubeSet {
     red: i32,
     green: i32,
     blue: i32,
 }
 
+#[derive(Debug)]
 struct Game {
     index: i32,
     draws: Vec<CubeSet>,
+}
+
+impl std::fmt::Display for Game {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut draws_string = "".to_string();
+        for draw in &self.draws {
+            draws_string = draws_string
+                + format!("\t{{R:{}, G:{}, B:{}}}\n", draw.red, draw.green, draw.blue).as_str();
+        }
+        write!(f, "Game Index: {}\nDraws:\n{}", self.index, draws_string)
+    }
 }
 
 fn extract_rolls(draw: &str, color: &str) -> Result<i32, SolutionError> {
@@ -22,22 +35,19 @@ fn extract_rolls(draw: &str, color: &str) -> Result<i32, SolutionError> {
 }
 
 fn extract_game_parts(game_str: &str) -> Result<Game, SolutionError> {
-    let mut split_game_str = game_str.split(':');
-    let game_index = split_game_str
-        .nth(0)
-        .unwrap()
+    let split_game_str: Vec<&str> = game_str.split(':').collect();
+    let game_index = split_game_str[0]
         .replace("Game ", "")
         .parse::<i32>()
         .unwrap();
     let mut draws: Vec<CubeSet> = vec![];
 
-    for draw_set in split_game_str.nth(0).unwrap().split(";") {
+    for draw_set in split_game_str[1].split(";") {
         let mut red = 0;
         let mut green = 0;
         let mut blue = 0;
 
         for draw in draw_set.split(',') {
-            let draw = draw.trim();
             if draw.ends_with("red") {
                 red = extract_rolls(draw, "red")?;
             } else if draw.ends_with("green") {
@@ -56,12 +66,9 @@ fn extract_game_parts(game_str: &str) -> Result<Game, SolutionError> {
 }
 
 fn game_is_valid(game: &Game) -> bool {
-    for draw in game.draws.as_slice() {
-        if draw.red > 12 || draw.green > 13 || draw.blue > 14 {
-            return false;
-        }
-    }
-    return true;
+    game.draws
+        .iter()
+        .any(|cube_set| cube_set.red > 12 || cube_set.green > 13 || cube_set.blue > 14)
 }
 
 fn game_cubeset_power(game: &Game) -> i32 {
