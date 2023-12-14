@@ -1,4 +1,4 @@
-mod dayone;
+mod one;
 use clap::Parser;
 use std::path::PathBuf;
 
@@ -13,7 +13,7 @@ fn main() {
 
     match args.problem.as_str() {
         "1" => {
-            if let Ok(sum) = dayone::run(args.data_path) {
+            if let Ok(sum) = one::run(args.data_path) {
                 println!("Sum: {}", sum);
             } else {
                 println!("No sum");

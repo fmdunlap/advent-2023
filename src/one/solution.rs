@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::path::PathBuf;
 
-const NUMBER_WORDS: &'static [&'static str] = &[
+const NUMBER_WORDS: &[&str] = &[
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
 ];
 
@@ -12,7 +12,7 @@ pub enum SolutionError {
 
 fn load_file(path: PathBuf) -> Result<String, Box<dyn Error>> {
     let data = std::fs::read_to_string(path)?;
-    return Ok(data);
+    Ok(data)
 }
 
 fn number_word_to_i32(word: &str) -> i32 {
@@ -40,7 +40,7 @@ fn extract_number_word(s: &str, start_index: usize) -> Option<i32> {
             return Some(number_word_to_i32(word));
         }
     }
-    return None;
+    None
 }
 
 fn extract_number(s: &str, reverse: bool) -> Result<i32, SolutionError> {
@@ -54,7 +54,7 @@ fn extract_number(s: &str, reverse: bool) -> Result<i32, SolutionError> {
             return Ok(digit_char);
         }
     }
-    return Err(SolutionError::NoNumberFound);
+    Err(SolutionError::NoNumberFound)
 }
 
 pub fn run(data_path: PathBuf) -> Result<i32, SolutionError> {
@@ -66,8 +66,8 @@ pub fn run(data_path: PathBuf) -> Result<i32, SolutionError> {
             let second_digit: i32 = extract_number(scribble, true)?;
             calibration_sum += (first_digit * 10) + second_digit;
         }
-        return Ok(calibration_sum);
+        Ok(calibration_sum)
     } else {
-        return Err(SolutionError::FileLoadError);
+        Err(SolutionError::FileLoadError)
     }
 }
