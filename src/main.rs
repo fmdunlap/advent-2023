@@ -22,6 +22,13 @@ fn main() {
                 println!("No sum");
             }
         }
+        "2" => {
+            if let Ok(sum) = two::run(args.data_path) {
+                println!("Sum: {}", sum);
+            } else {
+                println!("No sum");
+            }
+        }
         _ => {
             println!("Not 1")
         }
