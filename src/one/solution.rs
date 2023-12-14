@@ -44,17 +44,13 @@ fn extract_number_word(s: &str, start_index: usize) -> Option<u32> {
 }
 
 fn extract_number(s: &str, reverse: bool) -> Result<u32, SolutionError> {
-    let s = if reverse {
-        s.chars().rev().collect::<String>()
-    } else {
-        s.to_string()
-    };
-
-    for (i, c) in s.chars().enumerate() {
+    for i in 0..s.len() {
+        let index = if reverse { s.len() - i - 1 } else { i };
+        let c = s.chars().nth(index).unwrap();
         if let Some(digit_char) = c.to_digit(10) {
             return Ok(digit_char);
         }
-        if let Some(digit_char) = extract_number_word(s.as_str(), i) {
+        if let Some(digit_char) = extract_number_word(s, index) {
             return Ok(digit_char);
         }
     }
