@@ -5,10 +5,12 @@ mod util;
 use clap::Parser;
 use error::SolutionError;
 use std::path::PathBuf;
+use util::SolutionPart;
 
 #[derive(Parser)]
 struct Cli {
     problem: String,
+    part: String,
     data_path: PathBuf,
 }
 
@@ -29,12 +31,21 @@ fn print_solved_message(answer: String) {
 fn main() {
     let args = Cli::parse();
 
+    let solution_part = match args.part.as_str() {
+        "1" => SolutionPart::PartOne,
+        "2" => SolutionPart::PartTwo,
+        _ => {
+            println!("Solution part was invalid!");
+            return;
+        }
+    };
+
     match args.problem.as_str() {
         "1" => match one::run(args.data_path) {
             Ok(answer) => print_solved_message(answer.to_string()),
             Err(err) => print_error_message(err),
         },
-        "2" => match two::run(args.data_path) {
+        "2" => match two::run(args.data_path, solution_part) {
             Ok(answer) => print_solved_message(answer.to_string()),
             Err(err) => print_error_message(err),
         },

@@ -9,3 +9,7 @@ pub fn load_file(path: PathBuf) -> Result<String, SolutionError> {
         Err(SolutionError::FileLoadError)
     }
 }
+pub enum SolutionPart {
+    PartOne,
+    PartTwo,
+}
