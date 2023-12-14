@@ -3,6 +3,7 @@ mod one;
 mod two;
 mod util;
 use clap::Parser;
+use error::SolutionError;
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -11,24 +12,32 @@ struct Cli {
     data_path: PathBuf,
 }
 
+fn print_error_message(err_type: SolutionError) {
+    let error_message = match err_type {
+        SolutionError::NoPossibleSolution => {
+            String::from("No solution is possible given the provided data.")
+        }
+        SolutionError::FileLoadError => String::from("File failed to load."),
+    };
+    println!("Failed to compute solution with error: {}", error_message);
+}
+
+fn print_solved_message(answer: String) {
+    println!("Got an answer! Answer is: {}", answer);
+}
+
 fn main() {
     let args = Cli::parse();
 
     match args.problem.as_str() {
-        "1" => {
-            if let Ok(sum) = one::run(args.data_path) {
-                println!("Sum: {}", sum);
-            } else {
-                println!("No sum");
-            }
-        }
-        "2" => {
-            if let Ok(sum) = two::run(args.data_path) {
-                println!("Sum: {}", sum);
-            } else {
-                println!("No sum");
-            }
-        }
+        "1" => match one::run(args.data_path) {
+            Ok(answer) => print_solved_message(answer.to_string()),
+            Err(err) => print_error_message(err),
+        },
+        "2" => match two::run(args.data_path) {
+            Ok(answer) => print_solved_message(answer.to_string()),
+            Err(err) => print_error_message(err),
+        },
         _ => {
             println!("Not 1")
         }
