@@ -15,7 +15,7 @@ fn load_file(path: PathBuf) -> Result<String, Box<dyn Error>> {
     Ok(data)
 }
 
-fn number_word_to_i32(word: &str) -> i32 {
+fn number_word_to_i32(word: &str) -> u32 {
     match word {
         "one" => 1,
         "two" => 2,
@@ -30,7 +30,7 @@ fn number_word_to_i32(word: &str) -> i32 {
     }
 }
 
-fn extract_number_word(s: &str, start_index: usize) -> Option<i32> {
+fn extract_number_word(s: &str, start_index: usize) -> Option<u32> {
     for word in NUMBER_WORDS {
         if start_index as i32 - word.len() as i32 + 1 < 0 {
             continue;
@@ -43,7 +43,7 @@ fn extract_number_word(s: &str, start_index: usize) -> Option<i32> {
     None
 }
 
-fn extract_number(s: &str, reverse: bool) -> Result<i32, SolutionError> {
+fn extract_number(s: &str, reverse: bool) -> Result<u32, SolutionError> {
     let s = if reverse {
         s.chars().rev().collect::<String>()
     } else {
@@ -52,7 +52,7 @@ fn extract_number(s: &str, reverse: bool) -> Result<i32, SolutionError> {
 
     for (i, c) in s.chars().enumerate() {
         if let Some(digit_char) = c.to_digit(10) {
-            return Ok(digit_char as i32);
+            return Ok(digit_char);
         }
         if let Some(digit_char) = extract_number_word(s.as_str(), i) {
             return Ok(digit_char);
@@ -61,13 +61,13 @@ fn extract_number(s: &str, reverse: bool) -> Result<i32, SolutionError> {
     Err(SolutionError::NoNumberFound)
 }
 
-pub fn run(data_path: PathBuf) -> Result<i32, SolutionError> {
+pub fn run(data_path: PathBuf) -> Result<u32, SolutionError> {
     if let Ok(contents) = load_file(data_path) {
-        let mut calibration_sum: i32 = 0;
+        let mut calibration_sum: u32 = 0;
 
         for scribble in contents.split('\n') {
-            let first_digit: i32 = extract_number(scribble, false)?;
-            let second_digit: i32 = extract_number(scribble, true)?;
+            let first_digit: u32 = extract_number(scribble, false)?;
+            let second_digit: u32 = extract_number(scribble, true)?;
             calibration_sum += (first_digit * 10) + second_digit;
         }
         Ok(calibration_sum)
