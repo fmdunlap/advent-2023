@@ -20,8 +20,8 @@ impl std::fmt::Display for Game {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut draws_string = "".to_string();
         for draw in &self.draws {
-            draws_string = draws_string
-                + format!("\t{{R:{}, G:{}, B:{}}}\n", draw.red, draw.green, draw.blue).as_str();
+            draws_string +=
+                format!("\t{{R:{}, G:{}, B:{}}}\n", draw.red, draw.green, draw.blue).as_str();
         }
         write!(f, "Game Index: {}\nDraws:\n{}", self.index, draws_string)
     }
@@ -36,13 +36,13 @@ fn extract_rolls(draw: &str, color: &str) -> Result<i32, SolutionError> {
 
 fn extract_game_parts(game_str: &str) -> Result<Game, SolutionError> {
     let split_game_str: Vec<&str> = game_str.split(':').collect();
-    let game_index = split_game_str[0]
+    let index = split_game_str[0]
         .replace("Game ", "")
         .parse::<i32>()
         .unwrap();
     let mut draws: Vec<CubeSet> = vec![];
 
-    for draw_set in split_game_str[1].split(";") {
+    for draw_set in split_game_str[1].split(';') {
         let mut red = 0;
         let mut green = 0;
         let mut blue = 0;
@@ -59,10 +59,7 @@ fn extract_game_parts(game_str: &str) -> Result<Game, SolutionError> {
         draws.push(CubeSet { red, green, blue })
     }
 
-    return Ok(Game {
-        index: game_index,
-        draws: draws,
-    });
+    Ok(Game { index, draws })
 }
 
 fn game_is_valid(game: &Game) -> bool {
