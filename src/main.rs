@@ -1,6 +1,5 @@
 mod error;
-mod one;
-mod two;
+mod solutions;
 mod util;
 use clap::Parser;
 use error::SolutionError;
@@ -41,11 +40,11 @@ fn main() {
     };
 
     match args.problem.as_str() {
-        "1" => match one::run(args.data_path) {
+        "1" => match solutions::one::run(args.data_path) {
             Ok(answer) => print_solved_message(answer.to_string()),
             Err(err) => print_error_message(err),
         },
-        "2" => match two::run(args.data_path, solution_part) {
+        "2" => match solutions::two::run(args.data_path, solution_part) {
             Ok(answer) => print_solved_message(answer.to_string()),
             Err(err) => print_error_message(err),
         },
