@@ -49,16 +49,14 @@ fn extract_number(s: &str, reverse: bool) -> Result<u32, SolutionError> {
 }
 
 pub fn run(data_path: PathBuf) -> Result<u32, SolutionError> {
-    if let Ok(contents) = load_file(data_path) {
-        let mut calibration_sum: u32 = 0;
+    let contents = load_file(data_path)?;
 
-        for scribble in contents.split('\n') {
-            let first_digit: u32 = extract_number(scribble, false)?;
-            let second_digit: u32 = extract_number(scribble, true)?;
-            calibration_sum += (first_digit * 10) + second_digit;
-        }
-        Ok(calibration_sum)
-    } else {
-        Err(SolutionError::FileLoadError)
+    let mut calibration_sum: u32 = 0;
+
+    for scribble in contents.split('\n') {
+        let first_digit: u32 = extract_number(scribble, false)?;
+        let second_digit: u32 = extract_number(scribble, true)?;
+        calibration_sum += (first_digit * 10) + second_digit;
     }
+    Ok(calibration_sum)
 }
