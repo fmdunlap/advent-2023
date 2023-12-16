@@ -95,88 +95,127 @@ impl EngineSchematic {
 
         for row in min_row..max_row + 1 {
             for col in min_col..max_col + 1 {
+                if row == point.row && col == point.col {
+                    continue;
+                }
                 neighbors.push(SchematicPoint { row, col });
             }
         }
 
         neighbors
     }
-
-    fn get_symbol_points(&self) -> Vec<SchematicPoint> {
-        let mut symbol_cells = vec![];
-
-        for row in 0..self.height {
-            for col in 0..self.width {
-                let cell = self[row][col];
-                if cell == IGNORED_CELL || NUMBERS.contains(&cell) {
-                    continue;
-                }
-                symbol_cells.push(SchematicPoint { row, col });
-            }
-        }
-        symbol_cells
-    }
-
-    fn get_full_number_points(&self, point: SchematicPoint) -> Vec<SchematicPoint> {
-        let mut pointer = point.clone();
-        let mut number_points = vec![];
-        while pointer.col < self.width - 1 {
-            if !NUMBERS.contains(&self[pointer.row][pointer.col + 1]) {
-                break;
-            }
-            pointer.col += 1;
-        }
-        while pointer.col > 0 {
-            number_points.push(pointer);
-            if !NUMBERS.contains(&self[pointer.row][pointer.col - 1]) {
-                break;
-            }
-            pointer.col -= 1;
-        }
-        number_points
-    }
 }
 
 pub fn run(data_path: PathBuf, solution_part: SolutionPart) -> Result<i32, SolutionError> {
     let engine_schematic = EngineSchematic::from(load_file(data_path)?);
-    let mut answer_sum: i32 = 0;
+    let mut answer_sum: u32 = 0;
 
-    let mut candidate_numbers: Vec<Vec<SchematicPoint>> = vec![];
+    for row in 0..engine_schematic.height {
+        let mut pointer = SchematicPoint {
+            row,
+            col: engine_schematic.width - 1,
+        };
+        loop {
+            if NUMBERS.contains(&engine_schematic[pointer]) {
+                let mut found_symbol = false;
+                let mut num = 0;
+                let mut pow = 0;
 
-    for symbol in engine_schematic.get_symbol_points() {
-        let mut explored_number_points: Vec<SchematicPoint> = vec![];
-        for neighbor in engine_schematic.get_neighboring_points(symbol) {
-            if explored_number_points.contains(&neighbor) {
-                continue;
-            }
-            if NUMBERS.contains(&engine_schematic[neighbor]) {
-                let number_points = engine_schematic.get_full_number_points(neighbor);
-                candidate_numbers.push(number_points.clone());
-                for number_point in number_points {
-                    explored_number_points.push(number_point);
+                while let Some(digit) = &engine_schematic[pointer].to_digit(10) {
+                    num += digit * 10_u32.pow(pow);
+                    pow += 1;
+                    for neighbor in engine_schematic.get_neighboring_points(pointer) {
+                        if !found_symbol
+                            && !NUMBERS.contains(&engine_schematic[neighbor])
+                            && IGNORED_CELL != engine_schematic[neighbor]
+                        {
+                            found_symbol = true;
+                        }
+                    }
+                    if pointer.col == 0 {
+                        break;
+                    }
+                    pointer.col -= 1
+                }
+                if found_symbol {
+                    answer_sum += num;
                 }
             }
-        }
-    }
-
-    for candidate_points in candidate_numbers {
-        let mut number = 0;
-        let mut pow: u32 = 0;
-        let mut i = 0;
-        while let Some(digit) = engine_schematic[candidate_points[i]].to_digit(10) {
-            number += digit as i32 * 10_i32.pow(pow);
-            pow += 1;
-            i += 1;
-            if i >= candidate_points.len() {
+            if pointer.col == 0 {
                 break;
             }
+            pointer.col -= 1;
         }
-        if candidate_points[0].row >= 135 {
-            println!("{}", number);
-        }
-        answer_sum += number;
     }
 
     let _ = solution_part;
-    Ok(answer_sum)
+    Ok(answer_sum as i32)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const TEST_SCHEMATIC: &str = ".*23\n45..\n....\n.*33";
+
+    #[test]
+    fn test_schematic_from_string() {
+        let engine_schematic = EngineSchematic::from(TEST_SCHEMATIC.to_string());
+
+        assert!(engine_schematic.height == 4);
+        assert!(engine_schematic.width == 4);
+        assert!(engine_schematic.data[0][2] == '2');
+    }
+
+    #[test]
+    fn test_center_neighbor_points() {
+        let engine_schematic = EngineSchematic::from(TEST_SCHEMATIC.to_string());
+
+        let center_neighbor_points =
+            engine_schematic.get_neighboring_points(SchematicPoint { col: 1, row: 1 });
+        assert!(center_neighbor_points.contains(&SchematicPoint { row: 0, col: 0 }));
+        assert!(center_neighbor_points.contains(&SchematicPoint { row: 0, col: 1 }));
+        assert!(center_neighbor_points.contains(&SchematicPoint { row: 0, col: 2 }));
+        assert!(center_neighbor_points.contains(&SchematicPoint { row: 1, col: 0 }));
+        assert!(center_neighbor_points.contains(&SchematicPoint { row: 1, col: 2 }));
+        assert!(center_neighbor_points.contains(&SchematicPoint { row: 2, col: 0 }));
+        assert!(center_neighbor_points.contains(&SchematicPoint { row: 2, col: 1 }));
+        assert!(center_neighbor_points.contains(&SchematicPoint { row: 2, col: 2 }));
+
+        assert!(!center_neighbor_points.contains(&SchematicPoint { row: 1, col: 1 }));
+    }
+
+    #[test]
+    fn test_edge_neighbor_points() {
+        let engine_schematic = EngineSchematic::from(TEST_SCHEMATIC.to_string());
+
+        let edge_neighbor_points =
+            engine_schematic.get_neighboring_points(SchematicPoint { row: 1, col: 0 });
+        assert!(edge_neighbor_points.contains(&SchematicPoint { row: 0, col: 0 }));
+        assert!(edge_neighbor_points.contains(&SchematicPoint { row: 0, col: 1 }));
+        assert!(edge_neighbor_points.contains(&SchematicPoint { row: 1, col: 1 }));
+        assert!(edge_neighbor_points.contains(&SchematicPoint { row: 2, col: 0 }));
+        assert!(edge_neighbor_points.contains(&SchematicPoint { row: 2, col: 1 }));
+
+        assert!(!edge_neighbor_points.contains(&SchematicPoint { row: 0, col: 2 }));
+        assert!(!edge_neighbor_points.contains(&SchematicPoint { row: 1, col: 2 }));
+        assert!(!edge_neighbor_points.contains(&SchematicPoint { row: 2, col: 2 }));
+        assert!(!edge_neighbor_points.contains(&SchematicPoint { row: 1, col: 0 }));
+    }
+
+    #[test]
+    fn test_top_neighbor_points() {
+        let engine_schematic = EngineSchematic::from(TEST_SCHEMATIC.to_string());
+
+        let top_neighbor_points =
+            engine_schematic.get_neighboring_points(SchematicPoint { row: 0, col: 1 });
+
+        assert!(top_neighbor_points.contains(&SchematicPoint { row: 0, col: 0 }));
+        assert!(top_neighbor_points.contains(&SchematicPoint { row: 0, col: 2 }));
+        assert!(top_neighbor_points.contains(&SchematicPoint { row: 1, col: 0 }));
+        assert!(top_neighbor_points.contains(&SchematicPoint { row: 1, col: 1 }));
+        assert!(top_neighbor_points.contains(&SchematicPoint { row: 1, col: 2 }));
+
+        assert!(!top_neighbor_points.contains(&SchematicPoint { row: 0, col: 1 }));
+    }
 }
