@@ -62,7 +62,8 @@ fn extract_game_parts(game_str: &str) -> Result<Game, SolutionError> {
 }
 
 fn game_is_valid(game: &Game) -> bool {
-    game.draws
+    !game
+        .draws
         .iter()
         .any(|cube_set| cube_set.red > 12 || cube_set.green > 13 || cube_set.blue > 14)
 }
@@ -81,7 +82,7 @@ fn game_cubeset_power(game: &Game) -> i32 {
     min_cube_set.red * min_cube_set.green * min_cube_set.blue
 }
 
-pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<i32, SolutionError> {
+pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<String, SolutionError> {
     let mut puzzle_answer: i32 = 0;
 
     for game_str in problem_data.split('\n') {
@@ -99,5 +100,5 @@ pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<i32, Sol
         }
     }
 
-    Ok(puzzle_answer)
+    Ok(puzzle_answer.to_string())
 }

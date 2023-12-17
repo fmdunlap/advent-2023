@@ -40,31 +40,32 @@ fn run_and_print(problem: u32, part: SolutionPart, data_path: PathBuf) {
     let problem_data = problem_result.unwrap();
 
     match problem {
-        1 => match solutions::one::run(problem_data) {
-            Ok(answer) => print_solved_message(answer.to_string()),
+        1 => match solutions::one::run(problem_data, part) {
+            Ok(answer) => print_solved_message(answer),
             Err(err) => print_error_message(&err),
         },
         2 => match solutions::two::run(problem_data, part) {
-            Ok(answer) => print_solved_message(answer.to_string()),
+            Ok(answer) => print_solved_message(answer),
             Err(err) => print_error_message(&err),
         },
         3 => match solutions::three::run(problem_data, part) {
-            Ok(answer) => print_solved_message(answer.to_string()),
+            Ok(answer) => print_solved_message(answer),
             Err(err) => print_error_message(&err),
         },
         4 => match solutions::four::run(problem_data, part) {
-            Ok(answer) => print_solved_message(answer.to_string()),
+            Ok(answer) => print_solved_message(answer),
             Err(err) => print_error_message(&err),
         },
         5 => match solutions::five::run(problem_data, part) {
-            Ok(answer) => print_solved_message(answer.to_string()),
+            Ok(answer) => print_solved_message(answer),
             Err(err) => print_error_message(&err),
         },
         _ => print_error_message(&SolutionError::UnknownProblem),
     }
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let args = Cli::parse();
 
     let solution_part = match args.part.as_str() {
@@ -82,7 +83,7 @@ fn main() {
             solution_part,
             args.data_path,
         ),
-        "serve" => {}
+        "serve" => server::serve(None, None).await,
         _ => println!("Command malformed."),
     }
 }

@@ -71,7 +71,7 @@ impl Display for ScratchCard {
     }
 }
 
-pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<i32, SolutionError> {
+pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<String, SolutionError> {
     let mut cards: Vec<ScratchCard> = vec![];
     for line in problem_data.split('\n') {
         let card = ScratchCard::from(line);
@@ -79,8 +79,8 @@ pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<i32, Sol
     }
 
     match solution_part {
-        SolutionPart::PartOne => Ok(part_one_solution(cards)),
-        SolutionPart::PartTwo => Ok(part_two_solution(cards)),
+        SolutionPart::PartOne => Ok(part_one_solution(cards).to_string()),
+        SolutionPart::PartTwo => Ok(part_two_solution(cards).to_string()),
     }
 }
 

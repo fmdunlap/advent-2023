@@ -205,11 +205,11 @@ fn part_two_solution(engine_schematic: EngineSchematic) -> i32 {
     answer
 }
 
-pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<i32, SolutionError> {
+pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<String, SolutionError> {
     let engine_schematic = EngineSchematic::from(problem_data);
     match solution_part {
-        SolutionPart::PartOne => Ok(part_one_solution(engine_schematic)),
-        SolutionPart::PartTwo => Ok(part_two_solution(engine_schematic)),
+        SolutionPart::PartOne => Ok(part_one_solution(engine_schematic).to_string()),
+        SolutionPart::PartTwo => Ok(part_two_solution(engine_schematic).to_string()),
     }
 }
 
