@@ -1,4 +1,5 @@
 mod error;
+mod server;
 mod solutions;
 mod util;
 use clap::Parser;
