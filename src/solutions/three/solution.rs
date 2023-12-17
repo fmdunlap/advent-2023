@@ -1,9 +1,6 @@
-use std::{collections::HashSet, fmt, ops::Index, path::PathBuf};
+use std::{collections::HashSet, fmt, ops::Index};
 
-use crate::{
-    error::SolutionError,
-    util::{load_file, SolutionPart},
-};
+use crate::{error::SolutionError, util::SolutionPart};
 const NUMBERS: [char; 10] = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 const IGNORED_CELL: char = '.';
 
@@ -208,8 +205,8 @@ fn part_two_solution(engine_schematic: EngineSchematic) -> i32 {
     answer
 }
 
-pub fn run(data_path: PathBuf, solution_part: SolutionPart) -> Result<i32, SolutionError> {
-    let engine_schematic = EngineSchematic::from(load_file(data_path)?);
+pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<i32, SolutionError> {
+    let engine_schematic = EngineSchematic::from(problem_data);
     match solution_part {
         SolutionPart::PartOne => Ok(part_one_solution(engine_schematic)),
         SolutionPart::PartTwo => Ok(part_two_solution(engine_schematic)),

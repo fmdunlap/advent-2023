@@ -1,19 +1,16 @@
-use std::path::PathBuf;
+use crate::{error::SolutionError, util::SolutionPart};
 
-use crate::{error::SolutionError, util::load_file, util::SolutionPart};
-
-pub fn run(data_path: PathBuf, solution_part: SolutionPart) -> Result<i32, SolutionError> {
-    let content = load_file(data_path)?;
+pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<i32, SolutionError> {
     match solution_part {
-        SolutionPart::PartOne => Ok(part_one_solution(content)),
-        SolutionPart::PartTwo => Ok(part_two_solution(content)),
+        SolutionPart::PartOne => Ok(part_one_solution(problem_data)),
+        SolutionPart::PartTwo => Ok(part_two_solution(problem_data)),
     }
 }
 
-fn part_two_solution(content: String) -> i32 {
+fn part_two_solution(problem_data: String) -> i32 {
     todo!()
 }
 
-fn part_one_solution(content: String) -> i32 {
+fn part_one_solution(problem_data: String) -> i32 {
     todo!()
 }

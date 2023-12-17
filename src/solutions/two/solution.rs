@@ -1,7 +1,6 @@
 use std::cmp::max;
-use std::path::PathBuf;
 
-use crate::{error::SolutionError, util::load_file, util::SolutionPart};
+use crate::{error::SolutionError, util::SolutionPart};
 
 #[derive(Debug)]
 struct CubeSet {
@@ -82,11 +81,10 @@ fn game_cubeset_power(game: &Game) -> i32 {
     min_cube_set.red * min_cube_set.green * min_cube_set.blue
 }
 
-pub fn run(data_path: PathBuf, solution_part: SolutionPart) -> Result<i32, SolutionError> {
-    let contents = load_file(data_path)?;
+pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<i32, SolutionError> {
     let mut puzzle_answer: i32 = 0;
 
-    for game_str in contents.split('\n') {
+    for game_str in problem_data.split('\n') {
         let game = extract_game_parts(game_str)?;
 
         match solution_part {

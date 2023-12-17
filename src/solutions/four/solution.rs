@@ -1,13 +1,9 @@
 use std::{
     collections::{HashMap, HashSet, VecDeque},
     fmt::Display,
-    path::PathBuf,
 };
 
-use crate::{
-    error::SolutionError,
-    util::{load_file, SolutionPart},
-};
+use crate::{error::SolutionError, util::SolutionPart};
 
 struct ScratchCard {
     winning_numbers: HashSet<u32>,
@@ -75,10 +71,9 @@ impl Display for ScratchCard {
     }
 }
 
-pub fn run(data_path: PathBuf, solution_part: SolutionPart) -> Result<i32, SolutionError> {
-    let content = load_file(data_path)?;
+pub fn run(problem_data: String, solution_part: SolutionPart) -> Result<i32, SolutionError> {
     let mut cards: Vec<ScratchCard> = vec![];
-    for line in content.split('\n') {
+    for line in problem_data.split('\n') {
         let card = ScratchCard::from(line);
         cards.push(card);
     }

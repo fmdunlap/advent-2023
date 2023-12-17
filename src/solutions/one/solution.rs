@@ -1,6 +1,4 @@
-use std::path::PathBuf;
-
-use crate::{error::SolutionError, util::load_file};
+use crate::error::SolutionError;
 
 const NUMBER_WORDS: &[&str] = &[
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
@@ -48,12 +46,10 @@ fn extract_number(s: &str, reverse: bool) -> Result<u32, SolutionError> {
     Err(SolutionError::NoPossibleSolution)
 }
 
-pub fn run(data_path: PathBuf) -> Result<u32, SolutionError> {
-    let contents = load_file(data_path)?;
-
+pub fn run(problem_data: String) -> Result<u32, SolutionError> {
     let mut calibration_sum: u32 = 0;
 
-    for scribble in contents.split('\n') {
+    for scribble in problem_data.split('\n') {
         let first_digit: u32 = extract_number(scribble, false)?;
         let second_digit: u32 = extract_number(scribble, true)?;
         calibration_sum += (first_digit * 10) + second_digit;
