@@ -1,4 +1,4 @@
-use std::{fmt, ops::Index, path::PathBuf};
+use std::{collections::HashSet, fmt, ops::Index, path::PathBuf};
 
 use crate::{
     error::SolutionError,
@@ -104,10 +104,44 @@ impl EngineSchematic {
 
         neighbors
     }
+
+    fn get_surrounding_numbers(&self, point: SchematicPoint) -> Vec<i32> {
+        let mut explored_set: HashSet<SchematicPoint> = HashSet::new();
+        let mut numbers: Vec<i32> = vec![];
+        for neighbor in self.get_neighboring_points(point) {
+            println!("{}", neighbor);
+            if explored_set.contains(&neighbor) {
+                continue;
+            }
+            if NUMBERS.contains(&self[neighbor]) {
+                let mut pointer = neighbor.clone();
+                loop {
+                    if pointer.col == self.width || !NUMBERS.contains(&self[pointer]) {
+                        pointer.col -= 1;
+                        break;
+                    }
+                    pointer.col += 1;
+                }
+                let mut number = 0;
+                let mut pow = 0;
+                while let Some(digit) = self[pointer].to_digit(10) {
+                    explored_set.insert(pointer.clone());
+                    number += digit as i32 * 10_i32.pow(pow);
+                    pow += 1;
+                    if pointer.col == 0 {
+                        break;
+                    }
+                    pointer.col -= 1;
+                }
+                println!("Pushing: {}", number);
+                numbers.push(number);
+            }
+        }
+        numbers
+    }
 }
 
-pub fn run(data_path: PathBuf, solution_part: SolutionPart) -> Result<i32, SolutionError> {
-    let engine_schematic = EngineSchematic::from(load_file(data_path)?);
+fn part_one_solution(engine_schematic: EngineSchematic) -> i32 {
     let mut answer_sum: u32 = 0;
 
     for row in 0..engine_schematic.height {
@@ -147,9 +181,39 @@ pub fn run(data_path: PathBuf, solution_part: SolutionPart) -> Result<i32, Solut
             pointer.col -= 1;
         }
     }
+    answer_sum as i32
+}
 
-    let _ = solution_part;
-    Ok(answer_sum as i32)
+fn part_two_solution(engine_schematic: EngineSchematic) -> i32 {
+    let mut answer: i32 = 0;
+    for row in 0..engine_schematic.height {
+        let mut pointer = SchematicPoint {
+            row,
+            col: engine_schematic.width - 1,
+        };
+        loop {
+            if engine_schematic[pointer] == '*' {
+                let surrounding_numbers = engine_schematic.get_surrounding_numbers(pointer);
+                if surrounding_numbers.len() == 2 {
+                    answer +=
+                        surrounding_numbers.get(0).unwrap() * surrounding_numbers.get(1).unwrap();
+                }
+            }
+            if pointer.col == 0 {
+                break;
+            }
+            pointer.col -= 1;
+        }
+    }
+    answer
+}
+
+pub fn run(data_path: PathBuf, solution_part: SolutionPart) -> Result<i32, SolutionError> {
+    let engine_schematic = EngineSchematic::from(load_file(data_path)?);
+    match solution_part {
+        SolutionPart::PartOne => Ok(part_one_solution(engine_schematic)),
+        SolutionPart::PartTwo => Ok(part_two_solution(engine_schematic)),
+    }
 }
 
 #[cfg(test)]
