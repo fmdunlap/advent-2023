@@ -52,6 +52,10 @@ fn main() {
             Ok(answer) => print_solved_message(answer.to_string()),
             Err(err) => print_error_message(err),
         },
+        "4" => match solutions::four::run(args.data_path, solution_part) {
+            Ok(answer) => print_solved_message(answer.to_string()),
+            Err(err) => print_error_message(err),
+        },
         _ => {
             println!("Not 1")
         }
