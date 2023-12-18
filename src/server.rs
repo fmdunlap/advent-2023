@@ -92,6 +92,9 @@ async fn solve(
                 SolutionError::NoPossibleSolution => "Solution could not be computed",
                 SolutionError::FileLoadError => "Failed to get solution input data",
                 SolutionError::UnknownProblem => "Unknown error occurred",
+                SolutionError::DataParsingError => {
+                    "An error occured while parsing the provided data."
+                }
             };
             let problem_output = ProblemOutput {
                 answer: None,

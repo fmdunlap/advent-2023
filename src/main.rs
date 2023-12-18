@@ -22,6 +22,9 @@ fn print_error_message(err_type: &SolutionError) {
         }
         SolutionError::FileLoadError => String::from("File failed to load."),
         SolutionError::UnknownProblem => String::from("Unknown Problem"),
+        SolutionError::DataParsingError => {
+            String::from("An error occurred while parsing the provided data.")
+        }
     };
     println!("Failed to compute solution with error: {}", error_message);
 }
