@@ -63,6 +63,10 @@ fn run_and_print(problem: u32, part: SolutionPart, data_path: PathBuf) {
             Ok(answer) => print_solved_message(answer),
             Err(err) => print_error_message(&err),
         },
+        6 => match solutions::six::run(problem_data, part) {
+            Ok(answer) => print_solved_message(answer),
+            Err(err) => print_error_message(&err),
+        },
         _ => print_error_message(&SolutionError::UnknownProblem),
     }
 }

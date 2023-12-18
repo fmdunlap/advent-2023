@@ -57,6 +57,7 @@ fn get_problem_answer(
         3 => solutions::three::run(input, part),
         4 => solutions::four::run(input, part),
         5 => solutions::five::run(input, part),
+        6 => solutions::six::run(input, part),
         _ => Err(SolutionError::UnknownProblem),
     }
 }
